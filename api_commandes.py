@@ -19,7 +19,7 @@ def get_all_orders_with_products_and_clients():
     return jsonify({'commande': commande})
 
 @app.route('/commande/<int:commande_id>', methods=['GET'])
-def get__order_with_product_and_client(commande_id):
+def get_order_with_product_and_client(commande_id):
     cursor.execute("""
     SELECT cmd.CommandeID, cmd.DateCommande, cmd.Statut, cmd.PrixTotal, cl.Nom AS NomClient,
     cl.Prenom AS PrenomClient, pr.Nom AS NomProduit, pr.Description AS DescriptionProduit, pr.PrixUnitaire AS PrixUnitaireProduit, 
@@ -32,6 +32,92 @@ def get__order_with_product_and_client(commande_id):
         return jsonify({'client': commande})
     else:
         return jsonify({'message': 'Client not found'}), 404
+
+@app.route('/commande', methods=['POST'])
+def create_order():
+    required_keys = ['ClientID', 'DateCommande', 'Statut', 'PrixTotal']
+    data = request.get_json()
+    if not all(key in data for key in required_keys):
+        return jsonify({'message': 'Incomplete data'}), 400
+    cursor.execute("""
+        INSERT INTO commandes (ClientID, DateCommande, Statut, PrixTotal) 
+        VALUES (%s, %s, %s, %s)
+        """, (data['ClientID'], data['DateCommande'], data['Statut'], data['PrixTotal']))
+    db_connection.commit()
+    return jsonify({'message': 'order created successfully'}), 201    
+ 
+@app.route('/commande/<int:id>', methods=['PUT'])
+def update_order(id):
+    data = request.get_json()
+    if not data:
+        return jsonify({'message': 'No data provided'}), 400
+
+    cursor.execute("""
+        UPDATE commandes
+        SET ClientID = %s, DateCommande = %s, Statut = %s, PrixTotal = %s
+        WHERE CommandeID = %s
+        """, (data.get('ClientID'), data.get('DateCommande'), data.get('Statut'), data.get('PrixTotal'), id))
+    
+    db_connection.commit()
+    if cursor.rowcount > 0:
+        return jsonify({'message': 'Order updated successfully'}), 200
+    else:
+        return jsonify({'message': 'Order not found'}), 404
+
+@app.route('/commande/<int:id>', methods=['DELETE'])
+def delete_order(id):
+    cursor.execute("SELECT * FROM commandes WHERE CommandeID = %s", (id,))
+    order = cursor.fetchone()
+    if order is None:
+        return jsonify({'message': 'Order not found'}), 404
+
+    cursor.execute("DELETE FROM commandes WHERE CommandeID = %s", (id,))
+    db_connection.commit()
+
+    return jsonify({'message': 'Order deleted successfully'}), 200
+
+@app.route('/commande/detail', methods=['POST'])
+def create_order_detail():
+    required_keys = ['CommandeID', 'ProduitID', 'Quantite']
+    data = request.get_json()
+    if not all(key in data for key in required_keys):
+        return jsonify({'message': 'Incomplete data'}), 400
+    cursor.execute("""
+        INSERT INTO detailscommande (CommandeID, ProduitID, Quantite) 
+        VALUES (%s, %s, %s)
+        """, (data['CommandeID'], data['ProduitID'], data['Quantite']))
+    db_connection.commit()
+    return jsonify({'message': 'order detail created successfully'}), 201   
+
+@app.route('/commande/detail/<int:id>', methods=['PUT'])
+def update_order_detail(id):
+    data = request.get_json()
+    if not data:
+        return jsonify({'message': 'No data provided'}), 400
+
+    cursor.execute("""
+        UPDATE detailscommande
+        SET CommandeID = %s, ProduitID = %s, Quantite = %s
+        WHERE DetailID = %s
+        """, (data.get('CommandeID'), data.get('ProduitID'), data.get('Quantite'), id))
+    
+    if cursor.rowcount == 0:
+        return jsonify({'message': 'Order detail not found'}), 404
+    
+    db_connection.commit()
+    return jsonify({'message': 'Order detail updated successfully'}), 200
+
+@app.route('/commande/detail/<int:id>', methods=['DELETE'])
+def delete_order_detail(id):
+    cursor.execute("SELECT * FROM detailscommande WHERE DetailID = %s", (id,))
+    order_detail = cursor.fetchone()
+    if order_detail is None:
+        return jsonify({'message': 'Order detail not found'}), 404
+
+    cursor.execute("DELETE FROM detailscommande WHERE DetailID = %s", (id,))
+    db_connection.commit()
+
+    return jsonify({'message': 'Order detail deleted successfully'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
