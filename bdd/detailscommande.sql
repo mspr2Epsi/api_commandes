@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `detailscommande` (
   PRIMARY KEY (`DetailID`),
   KEY `fk_detailsCommande_commandes` (`CommandeID`),
   KEY `fk_detailsCommande_produits` (`ProduitID`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `detailscommande`
