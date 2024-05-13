@@ -2,10 +2,10 @@
 -- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Hôte : 127.0.0.1:3306
--- Généré le : mer. 24 avr. 2024 à 14:50
--- Version du serveur : 8.0.31
--- Version de PHP : 8.0.26
+-- Host: 127.0.0.1:3306
+-- Generation Time: May 13, 2024 at 01:39 PM
+-- Server version: 8.0.31
+-- PHP Version: 8.0.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `mspr2`
+-- Database: `mspr2`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `detailscommande`
+-- Table structure for table `detailscommande`
 --
 
 DROP TABLE IF EXISTS `detailscommande`;
@@ -36,16 +36,16 @@ CREATE TABLE IF NOT EXISTS `detailscommande` (
   PRIMARY KEY (`DetailID`),
   KEY `fk_detailsCommande_commandes` (`CommandeID`),
   KEY `fk_detailsCommande_produits` (`ProduitID`)
-) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Déchargement des données de la table `detailscommande`
+-- Dumping data for table `detailscommande`
 --
 
 INSERT INTO `detailscommande` (`DetailID`, `CommandeID`, `ProduitID`, `Quantite`) VALUES
 (1, 1, 1, 2),
 (2, 1, 2, 3),
-(3, 2, 3, 1),
+(3, 9, 8, 12),
 (4, 2, 4, 2),
 (5, 3, 5, 2),
 (6, 3, 6, 1),
