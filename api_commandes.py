@@ -10,6 +10,10 @@ app = Flask(__name__)
 
 @app.route('/commande', methods=['GET'])
 def get_all_orders_with_products_and_clients():
+    token = request.headers.get('Authorization')
+    if read_possible(token) != True:
+        return jsonify({'message': 'Unauthorized'}), 401    
+
     cursor.execute("""SELECT cmd.CommandeID, cmd.DateCommande, cmd.Statut, cmd.PrixTotal, cl.Nom AS NomClient,
     cl.Prenom AS PrenomClient, pr.Nom AS NomProduit, pr.Description AS DescriptionProduit, pr.PrixUnitaire AS PrixUnitaireProduit, 
     pr.Stock AS StockProduit, pr.Fournisseur AS FournisseurProduit, dc.Quantite FROM commandes cmd JOIN clients cl 
@@ -20,6 +24,10 @@ def get_all_orders_with_products_and_clients():
 
 @app.route('/commande/<int:commande_id>', methods=['GET'])
 def get_order_with_product_and_client(commande_id):
+    token = request.headers.get('Authorization')
+    if read_possible(token) != True:
+        return jsonify({'message': 'Unauthorized'}), 401    
+
     cursor.execute("""
     SELECT cmd.CommandeID, cmd.DateCommande, cmd.Statut, cmd.PrixTotal, cl.Nom AS NomClient,
     cl.Prenom AS PrenomClient, pr.Nom AS NomProduit, pr.Description AS DescriptionProduit, pr.PrixUnitaire AS PrixUnitaireProduit, 
@@ -35,6 +43,10 @@ def get_order_with_product_and_client(commande_id):
 
 @app.route('/commande', methods=['POST'])
 def create_order():
+    token = request.headers.get('Authorization')
+    if creation_possible(token) != True:
+        return jsonify({'message': 'Unauthorized'}), 401  
+    
     required_keys = ['ClientID', 'DateCommande', 'Statut', 'PrixTotal']
     data = request.get_json()
     if not all(key in data for key in required_keys):
@@ -48,6 +60,10 @@ def create_order():
  
 @app.route('/commande/<int:id>', methods=['PUT'])
 def update_order(id):
+    token = request.headers.get('Authorization')
+    if update_possible(token) != True:
+        return jsonify({'message': 'Unauthorized'}), 401 
+    
     data = request.get_json()
     if not data:
         return jsonify({'message': 'No data provided'}), 400
@@ -66,6 +82,10 @@ def update_order(id):
 
 @app.route('/commande/<int:id>', methods=['DELETE'])
 def delete_order(id):
+    token = request.headers.get('Authorization')
+    if delete_possible(token) != True:
+        return jsonify({'message': 'Unauthorized'}), 401 
+
     cursor.execute("SELECT * FROM commandes WHERE CommandeID = %s", (id,))
     order = cursor.fetchone()
     if order is None:
@@ -78,6 +98,10 @@ def delete_order(id):
 
 @app.route('/commande/detail', methods=['POST'])
 def create_order_detail():
+    token = request.headers.get('Authorization')
+    if creation_possible(token) != True:
+        return jsonify({'message': 'Unauthorized'}), 401 
+
     required_keys = ['CommandeID', 'ProduitID', 'Quantite']
     data = request.get_json()
     if not all(key in data for key in required_keys):
@@ -91,6 +115,9 @@ def create_order_detail():
 
 @app.route('/commande/detail/<int:id>', methods=['PUT'])
 def update_order_detail(id):
+    token = request.headers.get('Authorization')
+    if update_possible(token) != True:
+        return jsonify({'message': 'Unauthorized'}), 401     
     data = request.get_json()
     if not data:
         return jsonify({'message': 'No data provided'}), 400
@@ -109,6 +136,10 @@ def update_order_detail(id):
 
 @app.route('/commande/detail/<int:id>', methods=['DELETE'])
 def delete_order_detail(id):
+    token = request.headers.get('Authorization')
+    if delete_possible(token) != True:
+        return jsonify({'message': 'Unauthorized'}), 401 
+
     cursor.execute("SELECT * FROM detailscommande WHERE DetailID = %s", (id,))
     order_detail = cursor.fetchone()
     if order_detail is None:
