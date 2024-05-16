@@ -101,5 +101,28 @@ class TestCommande(unittest.TestCase):
             response = self.app.put(f'/commande/{order_id}', json=invalid_data, headers={'Authorization': 'valid_token'})
             self.assertEqual(response.status_code, 400)
 
+
+
+    def test_delete_order_with_valid_token(self):
+        # Assuming an existing order ID and a valid token
+        order_id = 1
+        with patch('api_commandes.delete_possible', return_value=True):
+            response = self.app.delete(f'/commande/{order_id}', headers={'Authorization': 'valid_token'})
+            self.assertEqual(response.status_code, 200)
+
+    def test_delete_order_with_invalid_token(self):
+        # Assuming an existing order ID and an invalid token
+        order_id = 1
+        with patch('api_commandes.delete_possible', return_value=False):
+            response = self.app.delete(f'/commande/{order_id}', headers={'Authorization': 'invalid_token'})
+            self.assertEqual(response.status_code, 401)
+
+    def test_delete_nonexistent_order(self):
+        # Assuming a non-existent order ID and a valid token
+        order_id = 999  # Assuming a non-existent order ID
+        with patch('api_commandes.delete_possible', return_value=True):
+            response = self.app.delete(f'/commande/{order_id}', headers={'Authorization': 'valid_token'})
+            self.assertEqual(response.status_code, 404)
+
 if __name__ == '__main__':
     unittest.main()
