@@ -10,6 +10,52 @@ class TestCommande(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
 
+    # Tests unitaires
+    def tests_unitaires(self):
+        self.test_get_all_orders_with_valid_token()
+        self.test_get_all_orders_with_invalid_token()
+        self.test_get_order_with_product_and_client_with_valid_token()
+        self.test_get_order_with_product_and_client_with_invalid_token()
+        self.test_create_order_with_incomplete_data()
+        self.test_update_order_with_no_data_provided()
+        self.test_delete_nonexistent_order()
+
+    # Tests d'intégration
+    def test_integration(self):
+        self.test_create_order_with_valid_token()
+        self.test_create_order_with_invalid_token()
+        self.test_update_order_with_valid_token()
+        self.test_update_order_with_invalid_token()
+        self.test_delete_order_with_valid_token()
+        self.test_delete_order_with_invalid_token()
+
+    # Tests fonctionnels
+    def test_fonctionnel(self):
+        self.test_get_all_orders_with_valid_token()
+        self.test_get_order_with_product_and_client_with_valid_token()
+        self.test_create_order_with_valid_token()
+        self.test_update_order_with_valid_token()
+        self.test_delete_order_with_valid_token()
+
+    # Tests de régression
+    def test_regression(self):
+        self.test_get_all_orders_with_valid_token()
+        self.test_get_order_with_product_and_client_with_valid_token()
+        self.test_delete_nonexistent_order()
+
+    # Tests de performance
+    def test_performance(self):
+        # Placeholder for performance tests
+        pass
+
+    # Tests de sécurité
+    def test_securite(self):
+        self.test_get_all_orders_with_invalid_token()
+        self.test_get_order_with_product_and_client_with_invalid_token()
+        self.test_create_order_with_invalid_token()
+        self.test_update_order_with_invalid_token()
+        self.test_delete_order_with_invalid_token()
+
     def test_get_all_orders_with_valid_token(self):
         with unittest.mock.patch('api_commandes.read_possible', return_value=True):
             response = self.app.get('/commande', headers={'Authorization': 'valid_token'})
@@ -124,5 +170,5 @@ class TestCommande(unittest.TestCase):
             response = self.app.delete(f'/commande/{order_id}', headers={'Authorization': 'valid_token'})
             self.assertEqual(response.status_code, 404)
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
