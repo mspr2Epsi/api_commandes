@@ -25,11 +25,8 @@ def get_all_orders_with_products_and_clients():
         channel.basic_publish(exchange='', routing_key='message_broker_commande', body=f"Temps d'execution {(datetime.now()-begin_time)} - Code 401 traitement get_all_orders_with_products_and_clients termine")        
         return jsonify({'message': 'Unauthorized'}), 401    
 
-    cursor.execute("""SELECT cmd.CommandeID, cmd.DateCommande, cmd.Statut, cmd.PrixTotal, cl.Nom AS NomClient,
-    cl.Prenom AS PrenomClient, pr.Nom AS NomProduit, pr.Description AS DescriptionProduit, pr.PrixUnitaire AS PrixUnitaireProduit, 
-    pr.Stock AS StockProduit, pr.Fournisseur AS FournisseurProduit, dc.Quantite FROM commandes cmd JOIN clients cl 
-    ON cmd.ClientID = cl.ClientID JOIN detailsCommande dc ON cmd.CommandeID = dc.CommandeID 
-    JOIN produits pr ON dc.ProduitID = pr.ProduitID;""")
+    cursor.execute("""SELECT cmd.CommandeID, cmd.DateCommande, cmd.Statut, cmd.PrixTotal,
+ dc.Quantite FROM commandes cmd  JOIN detailsCommande dc ON cmd.CommandeID = dc.CommandeID ;""")
     commande = cursor.fetchall()
     channel.basic_publish(exchange='', routing_key='message_broker_commande', body=f"Temps d'execution {(datetime.now()-begin_time)} - Code 200 traitement get_all_orders_with_products_and_clients termine")       
     return jsonify({'commande': commande})
@@ -44,11 +41,8 @@ def get_order_with_product_and_client(commande_id):
         return jsonify({'message': 'Unauthorized'}), 401    
 
     cursor.execute("""
-    SELECT cmd.CommandeID, cmd.DateCommande, cmd.Statut, cmd.PrixTotal, cl.Nom AS NomClient,
-    cl.Prenom AS PrenomClient, pr.Nom AS NomProduit, pr.Description AS DescriptionProduit, pr.PrixUnitaire AS PrixUnitaireProduit, 
-    pr.Stock AS StockProduit, pr.Fournisseur AS FournisseurProduit, dc.Quantite FROM commandes cmd JOIN clients cl 
-    ON cmd.ClientID = cl.ClientID JOIN detailsCommande dc ON cmd.CommandeID = dc.CommandeID 
-    JOIN produits pr ON dc.ProduitID = pr.ProduitID  WHERE cmd.CommandeID = %s;
+    SELECT cmd.CommandeID, cmd.DateCommande, cmd.Statut, cmd.PrixTotal,
+ dc.Quantite FROM commandes cmd  JOIN detailsCommande dc ON cmd.CommandeID = dc.CommandeID  WHERE cmd.CommandeID = %s;
     """, (commande_id,))
     commande = cursor.fetchall()
     if commande:
