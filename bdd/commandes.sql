@@ -1,33 +1,8 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Generation Time: May 13, 2024 at 01:39 PM
--- Server version: 8.0.31
--- PHP Version: 8.0.26
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `mspr2`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `commandes`
---
-
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS `detailscommande`;
 DROP TABLE IF EXISTS `commandes`;
+
+-- Create the `commandes` table
 CREATE TABLE IF NOT EXISTS `commandes` (
   `CommandeID` int NOT NULL AUTO_INCREMENT,
   `ClientID` int DEFAULT NULL,
@@ -38,10 +13,7 @@ CREATE TABLE IF NOT EXISTS `commandes` (
   KEY `fk_commandes_clients` (`ClientID`)
 ) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `commandes`
---
-
+-- Insert data into the `commandes` table
 INSERT INTO `commandes` (`CommandeID`, `ClientID`, `DateCommande`, `Statut`, `PrixTotal`) VALUES
 (1, 6, '2024-06-24 00:00:00', 'En cours new', '50.00'),
 (2, 2, '2024-04-24 16:30:37', 'En cours', '0.00'),
@@ -52,8 +24,38 @@ INSERT INTO `commandes` (`CommandeID`, `ClientID`, `DateCommande`, `Statut`, `Pr
 (7, 7, '2024-04-24 16:30:37', 'En cours', '0.00'),
 (8, 8, '2024-04-24 16:30:37', 'En cours', '0.00'),
 (9, 9, '2024-04-24 16:30:37', 'En cours', '0.00');
-COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- Create the `detailscommande` table
+CREATE TABLE IF NOT EXISTS `detailsCommande` (
+  `DetailID` int NOT NULL AUTO_INCREMENT,
+  `CommandeID` int DEFAULT NULL,
+  `ProduitID` int DEFAULT NULL,
+  `Quantite` int DEFAULT NULL,
+  PRIMARY KEY (`DetailID`),
+  KEY `fk_detailsCommande_commandes` (`CommandeID`),
+  KEY `fk_detailsCommande_produits` (`ProduitID`)
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Insert data into the `detailscommande` table
+INSERT INTO `detailsCommande` (`DetailID`, `CommandeID`, `ProduitID`, `Quantite`) VALUES
+(1, 1, 1, 2),
+(2, 1, 2, 3),
+(3, 9, 8, 12),
+(4, 2, 4, 2),
+(5, 3, 5, 2),
+(6, 3, 6, 1),
+(7, 4, 7, 3),
+(8, 4, 8, 1),
+(9, 5, 9, 4),
+(10, 5, 10, 2),
+(11, 6, 11, 3),
+(12, 6, 12, 2),
+(13, 7, 13, 1),
+(14, 7, 14, 3),
+(15, 8, 15, 2),
+(16, 8, 16, 1),
+(17, 9, 17, 3),
+(18, 9, 18, 2);
+
+-- Commit the transaction
+COMMIT;

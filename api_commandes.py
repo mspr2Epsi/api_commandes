@@ -5,10 +5,21 @@ import pika
 from datetime import datetime
 
 #pour le message broker
+rabbitmq_host = 'rabbitmq'
+rabbitmq_port = 5672
+rabbitmq_user = 'user'
+rabbitmq_password = 'password'
+
+credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_password)
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='localhost'))
+    pika.ConnectionParameters(
+        host=rabbitmq_host,
+        port=rabbitmq_port,
+        credentials=credentials
+        )
+    )
 channel = connection.channel()
-channel.queue_declare(queue='message_broker_client')
+channel.queue_declare(queue='message_broker_commande')
 
 db_connection = connect_to_database()
 cursor = db_connection.cursor()
@@ -192,4 +203,4 @@ def delete_order_detail(id):
     return jsonify({'message': 'Order detail deleted successfully'}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000,debug=True)
